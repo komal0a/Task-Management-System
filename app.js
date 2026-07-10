@@ -11,5 +11,6 @@ app.get('/health', (req, res) => {
   res.status(200).json({ status: 'ok', message: 'Server is healthy' });
 });
 
+app.use('/api/v1/auth', require('./routes/authRoutes'));
 
 module.exports = app;
