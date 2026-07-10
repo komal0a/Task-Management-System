@@ -1,7 +1,7 @@
 const Task = require('../models/Task');
 
 
-const createTask = async (req, res) => {
+const createTask = async (req, res, next) => {
   try {
     const { title, description, status, priority, due_date } = req.body;
 
@@ -27,15 +27,12 @@ const createTask = async (req, res) => {
       data: task,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Something went wrong while creating the task',
-    });
+    next(error);
   }
 };
 
 
-const getTasks = async (req, res) => {
+const getTasks = async (req, res, next) => {
   try {
     const tasks = await Task.find({ created_by: req.user._id }).sort({ createdAt: -1 });
 
@@ -45,15 +42,12 @@ const getTasks = async (req, res) => {
       data: tasks,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Something went wrong while fetching tasks',
-    });
+    next(error);
   }
 };
 
 
-const getTaskById = async (req, res) => {
+const getTaskById = async (req, res, next) => {
   try {
     const task = await Task.findOne({ _id: req.params.id, created_by: req.user._id });
 
@@ -70,15 +64,12 @@ const getTaskById = async (req, res) => {
       data: task,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Something went wrong while fetching the task',
-    });
+    next(error);
   }
 };
 
 
-const updateTask = async (req, res) => {
+const updateTask = async (req, res, next) => {
   try {
     const { title, description, status, priority, due_date } = req.body;
 
@@ -105,14 +96,11 @@ const updateTask = async (req, res) => {
       data: task,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Something went wrong while updating the task',
-    });
+    next(error);
   }
 };
 
-const deleteTask = async (req, res) => {
+const deleteTask = async (req, res, next) => {
   try {
     const task = await Task.findOneAndDelete({ _id: req.params.id, created_by: req.user._id });
 
@@ -129,10 +117,7 @@ const deleteTask = async (req, res) => {
       data: null,
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Something went wrong while deleting the task',
-    });
+    next(error);
   }
 };
 

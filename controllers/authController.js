@@ -8,7 +8,7 @@ const SALT_ROUNDS = 10;
  * @route   POST /api/v1/auth/register
  * @desc    Register a new user
  */
-const register = async (req, res) => {
+const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
 
@@ -47,10 +47,7 @@ const register = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Something went wrong during registration',
-    });
+    next(error);
   }
 };
 
@@ -58,7 +55,7 @@ const register = async (req, res) => {
  * @route   POST /api/v1/auth/login
  * @desc    Authenticate a user and return a JWT
  */
-const login = async (req, res) => {
+const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
 
@@ -102,10 +99,7 @@ const login = async (req, res) => {
       },
     });
   } catch (error) {
-    return res.status(500).json({
-      success: false,
-      message: 'Something went wrong during login',
-    });
+    next(error);
   }
 };
 

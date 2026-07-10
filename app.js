@@ -1,4 +1,5 @@
 const express = require('express');
+const { notFound, errorHandler } = require('./middleware/errorMiddleware');
 
 const app = express();
 
@@ -13,5 +14,8 @@ app.get('/health', (req, res) => {
 
 app.use('/api/v1/auth', require('./routes/authRoutes'));
 app.use('/api/v1/tasks', require('./routes/taskRoutes'));
+
+app.use(notFound);
+app.use(errorHandler);
 
 module.exports = app;
