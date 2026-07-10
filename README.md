@@ -1,43 +1,62 @@
 # Task Management System Backend API
 
-A RESTful Task Management System built using **Node.js**, **Express.js**, and **MongoDB**. The application provides JWT-based authentication and allows authenticated users to securely manage their own tasks.
+A RESTful Task Management System built using **Node.js**, **Express.js**, and **MongoDB**. The application provides secure JWT-based authentication and allows authenticated users to manage their personal tasks with filtering, search, pagination, task statistics, soft delete, and interactive API documentation.
 
 ---
 
-## Project Objective
+# Project Objective
 
 This project was developed as a backend assignment to demonstrate:
 
-- REST API design
+- REST API Design
 - JWT Authentication & Authorization
-- Secure password hashing with bcrypt
-- MongoDB database integration
-- CRUD operations
-- Filtering, searching and pagination
-- Input validation
-- Global error handling
-- Modular project architecture
+- Secure Password Hashing using bcrypt
+- MongoDB Database Integration
+- CRUD Operations
+- Filtering, Search & Pagination
+- Request Validation
+- Global Error Handling
+- Modular Project Architecture
+- API Documentation using Swagger
 
 ---
 
-## Features
+# Features
 
+## Authentication
 - User Registration
 - User Login
 - JWT Authentication
-- Protected Task APIs
-- Create, Read, Update and Delete Tasks
+- Password Hashing using bcrypt
+
+## Task Management
+- Create Task
+- Get All Tasks
+- Get Task by ID
+- Update Task
+- Soft Delete Task
+
+## Task Utilities
 - Filter Tasks by Status
 - Filter Tasks by Priority
 - Search Tasks by Title
 - Pagination
-- Soft Delete
+- Task Statistics Endpoint
+
+## API Quality
+- Protected Task APIs
 - Request Validation
 - Global Error Handling
+- User-specific Task Authorization
+
+## Documentation & Tooling
+- Swagger API Documentation
+- Postman Collection
+- Docker Support
 
 ---
 
-## Tech Stack
+# Tech Stack
 
 - Node.js
 - Express.js
@@ -47,16 +66,19 @@ This project was developed as a backend assignment to demonstrate:
 - bcrypt
 - dotenv
 - express-validator
+- Swagger (swagger-jsdoc, swagger-ui-express)
+- Docker & Docker Compose
 
 ---
 
-## Project Structure
+# Project Structure
 
-```
+```text
 task-management-system
 │
 ├── config
-│   └── db.js
+│   ├── db.js
+│   └── swagger.js
 │
 ├── controllers
 │   ├── authController.js
@@ -84,41 +106,56 @@ task-management-system
 │
 ├── app.js
 ├── server.js
+├── Dockerfile
+├── docker-compose.yml
+├── .dockerignore
 ├── package.json
+├── package-lock.json
 ├── .env.example
+├── Task Management System API.postman_collection.json
 └── README.md
 ```
 
 ---
 
-## Installation & Setup
+# Installation & Setup
 
-### Clone the repository
+## Clone the Repository
 
 ```bash
 git clone https://github.com/komal0a/Task-Management-System.git
 cd Task-Management-System
 ```
 
-### Install dependencies
+---
+
+## Install Dependencies
 
 ```bash
 npm install
 ```
 
-### Create Environment Variables
+---
 
-Create a `.env` file in the project root using `.env.example`.
+## Environment Variables
+
+Create a `.env` file using `.env.example`
 
 ```env
 PORT=5000
+
 MONGO_URI=your_mongodb_connection_string
+
 JWT_SECRET=your_secret_key
+
 JWT_EXPIRES_IN=7d
+
 BCRYPT_SALT_ROUNDS=10
 ```
 
-### Run the application
+---
+
+## Run the Application
 
 Development
 
@@ -131,6 +168,54 @@ Production
 ```bash
 npm start
 ```
+
+---
+
+# Docker
+
+## Build Docker Image
+
+```bash
+docker compose build
+```
+
+## Run the Application
+
+```bash
+docker compose up
+```
+
+## Stop the Application
+
+```bash
+docker compose down
+```
+
+> **Note:** This project uses **MongoDB Atlas**, so Docker is configured only for the backend application.
+
+---
+
+# Swagger API Documentation
+
+After starting the server, open:
+
+```text
+http://localhost:5000/api-docs
+```
+
+Swagger UI provides interactive documentation for all available endpoints.
+
+---
+
+# Postman Collection
+
+A ready-to-use Postman collection is included in the repository.
+
+```
+Task Management System API.postman_collection.json
+```
+
+Import the collection into Postman to test all APIs.
 
 ---
 
@@ -172,16 +257,17 @@ npm start
 |---------|----------|-------------|
 | POST | `/api/v1/tasks` | Create Task |
 | GET | `/api/v1/tasks` | Get All Tasks |
-| GET | `/api/v1/tasks/:id` | Get Task By ID |
+| GET | `/api/v1/tasks/:id` | Get Task by ID |
 | PUT | `/api/v1/tasks/:id` | Update Task |
-| DELETE | `/api/v1/tasks/:id` | Delete Task |
+| DELETE | `/api/v1/tasks/:id` | Soft Delete Task |
+| GET | `/api/v1/tasks/stats` | Get Task Statistics |
 
 ### Create Task Request
 
 ```json
 {
-  "title": "Complete Assignment",
-  "description": "Finish backend project",
+  "title": "Complete Backend Assignment",
+  "description": "Finish Task Management Backend",
   "status": "pending",
   "priority": "high",
   "due_date": "2026-07-20"
@@ -190,9 +276,9 @@ npm start
 
 ---
 
-## Filtering & Pagination
+# Filtering, Search & Pagination
 
-Supported query parameters:
+Supported Query Parameters
 
 ```http
 GET /api/v1/tasks?status=pending
@@ -204,13 +290,44 @@ GET /api/v1/tasks?search=assignment
 GET /api/v1/tasks?page=1&limit=10
 ```
 
-These filters can also be combined.
+Filters can be combined.
+
+Example:
+
+```http
+GET /api/v1/tasks?status=pending&priority=high&page=1&limit=5
+```
 
 ---
 
-## Response Format
+# Task Statistics
 
-### Success Response
+Endpoint
+
+```http
+GET /api/v1/tasks/stats
+```
+
+Sample Response
+
+```json
+{
+  "success": true,
+  "data": {
+    "totalTasks": 15,
+    "completedTasks": 8,
+    "pendingTasks": 4,
+    "inProgressTasks": 2,
+    "overdueTasks": 1
+  }
+}
+```
+
+---
+
+# Response Format
+
+## Success Response
 
 ```json
 {
@@ -220,7 +337,7 @@ These filters can also be combined.
 }
 ```
 
-### Error Response
+## Error Response
 
 ```json
 {
@@ -231,40 +348,41 @@ These filters can also be combined.
 
 ---
 
-## Common HTTP Status Codes
+# Common HTTP Status Codes
 
-| Status Code | Meaning |
-|-------------|---------|
+| Status Code | Description |
+|-------------|-------------|
 | 200 | OK |
 | 201 | Created |
 | 400 | Bad Request |
 | 401 | Unauthorized |
-| 404 | Not Found |
+| 404 | Resource Not Found |
 | 500 | Internal Server Error |
 
 ---
 
-## Assumptions
+# Assumptions
 
 - Each task belongs to exactly one authenticated user.
 - Users can only access and manage their own tasks.
-- Passwords are securely hashed using bcrypt before storage.
+- Passwords are securely hashed before storage.
 - JWT Bearer Token authentication is required for all task-related APIs.
+- Tasks are **soft deleted** and excluded from normal queries and statistics.
 
 ---
 
-## Future Improvements
+# Future Improvements
 
-- Docker Support
 - Refresh Token Authentication
 - Unit & Integration Tests
-- Soft Delete for Tasks
-- Task Statistics Endpoint
 - Role-Based Access Control (RBAC)
+- Rate Limiting
+- CI/CD Pipeline
+- Email Notifications
 
 ---
 
-## Author
+# Author
 
 **Komal**
 
