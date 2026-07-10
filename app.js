@@ -12,5 +12,6 @@ app.get('/health', (req, res) => {
 });
 
 app.use('/api/v1/auth', require('./routes/authRoutes'));
+app.use('/api/v1/tasks', require('./routes/taskRoutes'));
 
 module.exports = app;
