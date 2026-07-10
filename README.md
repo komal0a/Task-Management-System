@@ -1,6 +1,22 @@
 # Task Management System Backend API
 
-A RESTful Task Management Backend built with **Node.js**, **Express.js**, and **MongoDB**. It provides JWT-based authentication and allows authenticated users to manage their own tasks securely.
+A RESTful Task Management System built using **Node.js**, **Express.js**, and **MongoDB**. The application provides JWT-based authentication and allows authenticated users to securely manage their own tasks.
+
+---
+
+## Project Objective
+
+This project was developed as a backend assignment to demonstrate:
+
+- REST API design
+- JWT Authentication & Authorization
+- Secure password hashing with bcrypt
+- MongoDB database integration
+- CRUD operations
+- Filtering, searching and pagination
+- Input validation
+- Global error handling
+- Modular project architecture
 
 ---
 
@@ -26,14 +42,14 @@ A RESTful Task Management Backend built with **Node.js**, **Express.js**, and **
 - Express.js
 - MongoDB Atlas
 - Mongoose
-- JWT
+- JWT (jsonwebtoken)
 - bcrypt
 - dotenv
 - express-validator
 
 ---
 
-## Folder Structure
+## Project Structure
 
 ```
 task-management-system
@@ -68,44 +84,30 @@ task-management-system
 ├── app.js
 ├── server.js
 ├── package.json
+├── .env.example
 └── README.md
 ```
 
 ---
 
-## Installation
+## Installation & Setup
 
-Clone the repository
+### Clone the repository
 
 ```bash
 git clone https://github.com/komal0a/Task-Management-System.git
-```
-
-Move into the project
-
-```bash
 cd Task-Management-System
 ```
 
-Install dependencies
+### Install dependencies
 
 ```bash
 npm install
 ```
 
-Create a `.env` file using `.env.example`
+### Create Environment Variables
 
-Run the server
-
-```bash
-npm run dev
-```
-
----
-
-## Environment Variables
-
-Create a `.env` file and add:
+Create a `.env` file in the project root using `.env.example`.
 
 ```env
 PORT=5000
@@ -115,159 +117,155 @@ JWT_EXPIRES_IN=7d
 BCRYPT_SALT_ROUNDS=10
 ```
 
+### Run the application
+
+Development
+
+```bash
+npm run dev
+```
+
+Production
+
+```bash
+npm start
+```
+
 ---
 
-## API Endpoints
+# API Endpoints
 
-### Authentication
+## Authentication
 
-#### Register
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/v1/auth/register` | Register a new user |
+| POST | `/api/v1/auth/login` | Login user |
 
-```
-POST /api/v1/auth/register
-```
-
-Body
+### Register Request
 
 ```json
 {
-    "name":"John Doe",
-    "email":"john@example.com",
-    "password":"12345678"
+  "name": "John Doe",
+  "email": "john@example.com",
+  "password": "12345678"
+}
+```
+
+### Login Request
+
+```json
+{
+  "email": "john@example.com",
+  "password": "12345678"
 }
 ```
 
 ---
 
-#### Login
+## Task APIs
 
-```
-POST /api/v1/auth/login
-```
+> All task endpoints require a valid JWT Bearer Token.
 
-Body
+| Method | Endpoint | Description |
+|---------|----------|-------------|
+| POST | `/api/v1/tasks` | Create Task |
+| GET | `/api/v1/tasks` | Get All Tasks |
+| GET | `/api/v1/tasks/:id` | Get Task By ID |
+| PUT | `/api/v1/tasks/:id` | Update Task |
+| DELETE | `/api/v1/tasks/:id` | Delete Task |
+
+### Create Task Request
 
 ```json
 {
-    "email":"john@example.com",
-    "password":"12345678"
+  "title": "Complete Assignment",
+  "description": "Finish backend project",
+  "status": "pending",
+  "priority": "high",
+  "due_date": "2026-07-20"
 }
 ```
 
 ---
 
-### Tasks
+## Filtering & Pagination
 
-#### Create Task
+Supported query parameters:
 
-```
-POST /api/v1/tasks
-```
+```http
+GET /api/v1/tasks?status=pending
 
-Authorization
+GET /api/v1/tasks?priority=high
 
-```
-Bearer Token
-```
+GET /api/v1/tasks?search=assignment
 
-Body
-
-```json
-{
-    "title":"Complete Assignment",
-    "description":"Finish backend project",
-    "status":"pending",
-    "priority":"high",
-    "due_date":"2026-07-20"
-}
+GET /api/v1/tasks?page=1&limit=10
 ```
 
----
-
-#### Get All Tasks
-
-```
-GET /api/v1/tasks
-```
-
-Supports
-
-```
-?page=1
-
-?limit=10
-
-?status=pending
-
-?priority=high
-
-?search=assignment
-```
-
----
-
-#### Get Task
-
-```
-GET /api/v1/tasks/:id
-```
-
----
-
-#### Update Task
-
-```
-PUT /api/v1/tasks/:id
-```
-
----
-
-#### Delete Task
-
-```
-DELETE /api/v1/tasks/:id
-```
+These filters can also be combined.
 
 ---
 
 ## Response Format
 
-### Success
+### Success Response
 
 ```json
 {
-    "success": true,
-    "message": "Success",
-    "data": {}
+  "success": true,
+  "message": "Operation successful",
+  "data": {}
 }
 ```
 
-### Error
+### Error Response
 
 ```json
 {
-    "success": false,
-    "message": "Error message"
+  "success": false,
+  "message": "Error message"
 }
 ```
+
+---
+
+## Common HTTP Status Codes
+
+| Status Code | Meaning |
+|-------------|---------|
+| 200 | OK |
+| 201 | Created |
+| 400 | Bad Request |
+| 401 | Unauthorized |
+| 404 | Not Found |
+| 500 | Internal Server Error |
 
 ---
 
 ## Assumptions
 
-- Each task belongs to a single authenticated user.
+- Each task belongs to exactly one authenticated user.
 - Users can only access and manage their own tasks.
-- Passwords are securely hashed using bcrypt.
-- JWT tokens are required for all task-related endpoints.
+- Passwords are securely hashed using bcrypt before storage.
+- JWT Bearer Token authentication is required for all task-related APIs.
 
 ---
 
 ## Future Improvements
 
-- Swagger Documentation
+- Swagger / OpenAPI Documentation
 - Docker Support
-- Refresh Tokens
-- Unit Tests
-- Integration Tests
-- Soft Delete
-- Task Statistics
+- Refresh Token Authentication
+- Unit & Integration Tests
+- Soft Delete for Tasks
+- Task Statistics Endpoint
+- Role-Based Access Control (RBAC)
+
+---
+
+## Author
+
+**Komal**
+
+Backend Assignment – Task Management System

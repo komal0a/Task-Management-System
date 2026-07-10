@@ -4,10 +4,7 @@ const generateToken = require('../utils/generateToken');
 
 const SALT_ROUNDS = 10;
 
-/**
- * @route   POST /api/v1/auth/register
- * @desc    Register a new user
- */
+
 const register = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -51,10 +48,7 @@ const register = async (req, res, next) => {
   }
 };
 
-/**
- * @route   POST /api/v1/auth/login
- * @desc    Authenticate a user and return a JWT
- */
+
 const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
