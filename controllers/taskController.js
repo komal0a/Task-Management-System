@@ -1,6 +1,40 @@
 const Task = require('../models/Task');
 
 
+const getTaskStats = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+
+    const [totalTasks, completedTasks, pendingTasks, inProgressTasks, overdueTasks] = await Promise.all([
+      Task.countDocuments({ created_by: userId }),
+      Task.countDocuments({ created_by: userId, status: 'completed' }),
+      Task.countDocuments({ created_by: userId, status: 'pending' }),
+      Task.countDocuments({ created_by: userId, status: 'in_progress' }),
+      Task.countDocuments({
+        created_by: userId,
+        status: { $ne: 'completed' },
+        due_date: { $lt: today },
+      }),
+    ]);
+
+    return res.status(200).json({
+      success: true,
+      message: 'Task statistics fetched successfully',
+      data: {
+        totalTasks,
+        completedTasks,
+        pendingTasks,
+        inProgressTasks,
+        overdueTasks,
+      },
+    });
+  } catch (error) {
+    next(error);
+  }
+};
+
 const createTask = async (req, res, next) => {
   try {
     const { title, description, status, priority, due_date } = req.body;
@@ -127,4 +161,5 @@ module.exports = {
   getTaskById,
   updateTask,
   deleteTask,
+  getTaskStats,
 };

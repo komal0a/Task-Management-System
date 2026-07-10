@@ -8,6 +8,7 @@ const {
   getTaskById,
   updateTask,
   deleteTask,
+  getTaskStats,
 } = require('../controllers/taskController');
 
 const router = express.Router();
@@ -16,6 +17,7 @@ router.use(authMiddleware);
 
 router.post('/', createTaskValidator, validateRequest, createTask);
 router.get('/', getTasks);
+router.get('/stats', getTaskStats);
 router.get('/:id', getTaskById);
 router.put('/:id', updateTaskValidator, validateRequest, updateTask);
 router.delete('/:id', deleteTask);
