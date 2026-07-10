@@ -187,7 +187,7 @@ module.exports = {
  *         description: Unauthorized
  *   get:
  *     summary: Get all tasks
- *     description: Retrieve all tasks belonging to the authenticated user.
+ *     description: Retrieve all tasks belonging to the authenticated user. Deleted tasks are not returned by this endpoint.
  *     tags: [Tasks]
  *     security:
  *       - bearerAuth: []
@@ -213,7 +213,7 @@ module.exports = {
  * /api/v1/tasks/stats:
  *   get:
  *     summary: Get task statistics
- *     description: Get task counts for the authenticated user, including overdue tasks.
+ *     description: Get task counts for the authenticated user, including overdue tasks. Deleted tasks are not counted.
  *     tags: [Tasks]
  *     security:
  *       - bearerAuth: []
@@ -240,7 +240,7 @@ module.exports = {
  * /api/v1/tasks/{id}:
  *   get:
  *     summary: Get a task by ID
- *     description: Retrieve a single task by its ID for the authenticated user.
+ *     description: Retrieve a single task by its ID for the authenticated user. Deleted tasks are not returned by this endpoint.
  *     tags: [Tasks]
  *     security:
  *       - bearerAuth: []
@@ -270,7 +270,7 @@ module.exports = {
  *         description: Task not found
  *   put:
  *     summary: Update a task
- *     description: Update the details of an existing task for the authenticated user.
+ *     description: Update the details of an existing task for the authenticated user. Deleted tasks cannot be updated.
  *     tags: [Tasks]
  *     security:
  *       - bearerAuth: []
@@ -325,7 +325,7 @@ module.exports = {
  *         description: Task not found
  *   delete:
  *     summary: Delete a task
- *     description: Delete a task by ID for the authenticated user.
+ *     description: Soft delete a task by ID for the authenticated user. The task is marked as deleted and will no longer be returned by normal task queries.
  *     tags: [Tasks]
  *     security:
  *       - bearerAuth: []

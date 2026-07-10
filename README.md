@@ -31,6 +31,7 @@ This project was developed as a backend assignment to demonstrate:
 - Filter Tasks by Priority
 - Search Tasks by Title
 - Pagination
+- Soft Delete
 - Request Validation
 - Global Error Handling
 
@@ -254,7 +255,6 @@ These filters can also be combined.
 
 ## Future Improvements
 
-- Swagger / OpenAPI Documentation
 - Docker Support
 - Refresh Token Authentication
 - Unit & Integration Tests

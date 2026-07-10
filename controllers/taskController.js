@@ -7,13 +7,15 @@ const getTaskStats = async (req, res, next) => {
     const today = new Date();
     today.setHours(0, 0, 0, 0);
 
+    const baseFilter = { created_by: userId, isDeleted: false };
+
     const [totalTasks, completedTasks, pendingTasks, inProgressTasks, overdueTasks] = await Promise.all([
-      Task.countDocuments({ created_by: userId }),
-      Task.countDocuments({ created_by: userId, status: 'completed' }),
-      Task.countDocuments({ created_by: userId, status: 'pending' }),
-      Task.countDocuments({ created_by: userId, status: 'in_progress' }),
+      Task.countDocuments(baseFilter),
+      Task.countDocuments({ ...baseFilter, status: 'completed' }),
+      Task.countDocuments({ ...baseFilter, status: 'pending' }),
+      Task.countDocuments({ ...baseFilter, status: 'in_progress' }),
       Task.countDocuments({
-        created_by: userId,
+        ...baseFilter,
         status: { $ne: 'completed' },
         due_date: { $lt: today },
       }),
@@ -68,7 +70,21 @@ const createTask = async (req, res, next) => {
 
 const getTasks = async (req, res, next) => {
   try {
-    const tasks = await Task.find({ created_by: req.user._id }).sort({ createdAt: -1 });
+    const { status, priority, search } = req.query;
+    const page = parseInt(req.query.page, 10) || 1;
+    const limit = parseInt(req.query.limit, 10) || 10;
+    const skip = (page - 1) * limit;
+
+    const filter = {
+      created_by: req.user._id,
+      isDeleted: false,
+    };
+
+    if (status) filter.status = status;
+    if (priority) filter.priority = priority;
+    if (search) filter.title = { $regex: search, $options: 'i' };
+
+    const tasks = await Task.find(filter).sort({ createdAt: -1 }).skip(skip).limit(limit);
 
     return res.status(200).json({
       success: true,
@@ -83,7 +99,7 @@ const getTasks = async (req, res, next) => {
 
 const getTaskById = async (req, res, next) => {
   try {
-    const task = await Task.findOne({ _id: req.params.id, created_by: req.user._id });
+    const task = await Task.findOne({ _id: req.params.id, created_by: req.user._id, isDeleted: false });
 
     if (!task) {
       return res.status(404).json({
@@ -107,7 +123,7 @@ const updateTask = async (req, res, next) => {
   try {
     const { title, description, status, priority, due_date } = req.body;
 
-    const task = await Task.findOne({ _id: req.params.id, created_by: req.user._id });
+    const task = await Task.findOne({ _id: req.params.id, created_by: req.user._id, isDeleted: false });
 
     if (!task) {
       return res.status(404).json({
@@ -136,7 +152,7 @@ const updateTask = async (req, res, next) => {
 
 const deleteTask = async (req, res, next) => {
   try {
-    const task = await Task.findOneAndDelete({ _id: req.params.id, created_by: req.user._id });
+    const task = await Task.findOne({ _id: req.params.id, created_by: req.user._id, isDeleted: false });
 
     if (!task) {
       return res.status(404).json({
@@ -145,10 +161,13 @@ const deleteTask = async (req, res, next) => {
       });
     }
 
+    task.isDeleted = true;
+    task.deletedAt = new Date();
+    await task.save();
+
     return res.status(200).json({
       success: true,
       message: 'Task deleted successfully',
-      data: null,
     });
   } catch (error) {
     next(error);
